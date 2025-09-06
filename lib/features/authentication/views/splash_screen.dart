@@ -1,5 +1,9 @@
 import 'package:books_discovery_app/core/constants/string_constants.dart';
 import 'package:books_discovery_app/features/authentication/views/login_screen.dart';
+import 'package:books_discovery_app/features/authentication/views/onboarding_screen.dart';
+import 'package:books_discovery_app/features/authentication/views/sign_up_screen.dart';
+import 'package:books_discovery_app/features/home/views/main_tab_screen.dart';
+import 'package:books_discovery_app/shared/app_shared_preferences.dart';
 import 'package:books_discovery_app/shared/widgets/app_text.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _startAnimation();
-    _navigateToAlbumScreen();
+    navigateScreenBasedOnCondition();
   }
 
   void _startAnimation() async {
@@ -30,10 +34,28 @@ class _SplashScreenState extends State<SplashScreen>
     });
   }
 
-  void _navigateToAlbumScreen() async {
+  Future<void> navigateScreenBasedOnCondition() async {
     await Future.delayed(const Duration(seconds: 3));
+
+    final bool isOnboardingSeen = AppSharedPreferences.customSharedPreferences
+        .isOnBoardingSeen();
+    final String? authToken = AppSharedPreferences.customSharedPreferences
+        .getAuthToken();
+
+    Widget nextScreen;
+
+    if (!isOnboardingSeen) {
+      nextScreen = const OnboardingScreen();
+    } else if (authToken != null && authToken.isNotEmpty) {
+      nextScreen = const MainTabScreen();
+    } else {
+      nextScreen = const LoginScreen();
+    }
+
+    if (!mounted) return;
+
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (context) => nextScreen),
       (route) => false,
     );
   }
@@ -49,7 +71,11 @@ class _SplashScreenState extends State<SplashScreen>
             scale: _scale,
             duration: const Duration(seconds: 2),
             curve: Curves.easeInOutBack,
-            child: AppText(StringConstants.appName, fontSize: 20),
+            child: AppText(
+              StringConstants.appName,
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ),
       ),

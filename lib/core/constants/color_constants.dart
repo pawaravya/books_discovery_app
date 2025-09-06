@@ -7,6 +7,8 @@ class ColorConstants {
   static const String whiteColor = '#FFFFFF';
 
   static const String themeColor = "#3D5CFF";
+static const greyColor = "#EAEAFF";
+  static const  String greyShade1 = "#858597";
 
 
 }

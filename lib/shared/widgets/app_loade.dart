@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 class AppLoader {
   static Widget loaderWidget({
     Color? color = Colors.white,
-    bool isUseThemeColor = true,
   }) {
     return Center(
       child: SizedBox(

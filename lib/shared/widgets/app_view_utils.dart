@@ -6,11 +6,12 @@ import 'package:books_discovery_app/shared/widgets/app_text.dart';
 import 'package:books_discovery_app/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+
 import 'package:hexcolor/hexcolor.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:lottie/lottie.dart';
+import 'package:top_snackbar_flutter/top_snack_bar.dart'; // Import the package
+import 'package:top_snackbar_flutter/custom_snack_bar.dart';
 
 class AppViewUtils {
   static getAssetImageSVG(
@@ -167,7 +168,6 @@ class AppViewUtils {
               },
               child: AppText(
                 StringConstants.logOut,
-                isUseThemeTextColor: false,
                 color: Colors.red,
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
@@ -234,7 +234,6 @@ class AppViewUtils {
                   },
                   child: AppText(
                     StringConstants.exit,
-                    isUseThemeTextColor: false,
                     color: Colors.red,
                     fontSize: 15,
                     fontWeight: FontWeight.w400,
@@ -297,7 +296,6 @@ class AppViewUtils {
                         buttonOption1Heading,
                         fontWeight: FontWeight.w400,
                         textAlign: TextAlign.center,
-                        isUseThemeTextColor: false,
                       ),
                     ),
                   ),
@@ -309,7 +307,6 @@ class AppViewUtils {
                         buttonOption2Heading,
                         fontWeight: FontWeight.w400,
                         textAlign: TextAlign.center,
-                        isUseThemeTextColor: false,
                       ),
                     ),
                   ),
@@ -497,29 +494,25 @@ class AppViewUtils {
     );
   }
 
-  static showSnackBar(
+  static void showTopSnackbar(
+    BuildContext context,
     String message, {
     bool isError = false,
     Duration duration = const Duration(milliseconds: 1500),
   }) {
-    var isSnackBarShowing = false;
-    Get.closeAllSnackbars();
-    if (!isSnackBarShowing) {
-      isSnackBarShowing = true;
-      Get.snackbar(
-        isError ? 'Error' : 'Success',
-        message,
-        duration: duration,
-        colorText: HexColor(ColorConstants.whiteColor),
-        isDismissible: true,
-        snackbarStatus: (status) {
-          if (status == SnackbarStatus.CLOSED) {
-            isSnackBarShowing = false;
-          }
-        },
-        backgroundColor: isError ? Colors.red.withOpacity(0.8) : Colors.black,
-      );
-    }
+    showTopSnackBar(
+      animationDuration: duration,
+      Overlay.of(context),
+      Material(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: isError ? Colors.red : HexColor(ColorConstants.themeColor),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(8.0)),
+          child: AppText(message, color: HexColor(ColorConstants.whiteColor)),
+        ),
+      ),
+    );
   }
 
   static dimissKeyBoard(BuildContext context) {

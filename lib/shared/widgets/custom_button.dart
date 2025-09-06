@@ -45,14 +45,16 @@ class CustomButton extends StatelessWidget {
       },
       // borderRadius: BorderRadius.circular(20),
       child: Container(
-        height: height ?? 41,
+        height: height ?? 50,
         width: width ?? double.infinity,
         decoration: BoxDecoration(
           border: Border.all(color: HexColor(ColorConstants.themeColor)),
 
           borderRadius: BorderRadius.circular(radius ?? 0),
 
-          color: isDisabled
+          color: isSecondaryButton
+              ? HexColor(ColorConstants.whiteColor)
+              : isDisabled
               ? HexColor(ColorConstants.themeColor).withOpacity(0.5)
               : HexColor(ColorConstants.themeColor),
         ),
@@ -62,22 +64,20 @@ class CustomButton extends StatelessWidget {
             Visibility(
               visible: !isLoading,
               replacement: AppLoader.loaderWidget(
-                isUseThemeColor: false,
                 color: isSecondaryButton
                     ? HexColor(ColorConstants.themeColor)
                     : HexColor(ColorConstants.whiteColor),
               ),
               child: AppText(
-                isUseThemeTextColor: false,
-                letterSpacing:
-                    textStyle?.letterSpacing ??
-                    (textStyle?.fontSize ?? 11.5) * 0.1,
+                // letterSpacing:
+                //     textStyle?.letterSpacing ??
+                //     (textStyle?.fontSize ?? 11.5) * 0.1,
                 text,
                 color: isSecondaryButton
                     ? HexColor(ColorConstants.themeColor)
                     : HexColor(ColorConstants.whiteColor),
-                fontSize: textStyle?.fontSize ?? 12,
-                fontWeight: textStyle?.fontWeight ?? FontWeight.w400,
+                fontSize: textStyle?.fontSize ?? 16,
+                fontWeight: textStyle?.fontWeight ?? FontWeight.w500,
                 textAlign: TextAlign.center,
               ),
             ),

@@ -19,13 +19,13 @@ class AppSharedPreferences {
     });
   }
 
-  void saveValue<T>(String key, T value) {
+  Future<void> saveValue<T>(String key, T value)  async {
     if (_prefs == null) {
       throw Exception('SharedPreferences not initialized');
     }
 
     if (value is String) {
-      _prefs!.setString(key, value);
+     await  _prefs!.setString(key, value);
     } else if (value is int) {
       _prefs!.setInt(key, value);
     } else if (value is double) {
@@ -86,18 +86,20 @@ class AppSharedPreferences {
     }
     await _prefs!.clear();
   }
-
-  String getauthToken() {
+  Future<void> setAuthToken(String token)async {
+await saveValue(_AUTHTOKENKEY, token);
+  }
+  String getAuthToken() {
     final token = AppSharedPreferences.customSharedPreferences.getValue<String>(
       _AUTHTOKENKEY,
     );
     return token ?? '';
   }
-  void saveUser(UserModel user){
-   saveValue(_USERLOGINDATAKEY, user.toJson().toString()) ;
+  Future<void> saveUser(UserModel user)async {
+  await  saveValue(_USERLOGINDATAKEY, user.toJson().toString()) ;
   }
-void setOnBoardingSeen(bool seen) {
-    saveValue(_IS_ONBOARDING_SEEN_KEY, seen);
+Future<void>  setOnBoardingSeen(bool seen) async  {
+  await  saveValue(_IS_ONBOARDING_SEEN_KEY, seen);
   }
 
   bool isOnBoardingSeen() {

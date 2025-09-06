@@ -15,14 +15,13 @@ class AppText extends StatelessWidget {
   final TextOverflow? textOverflow;
   final double letterSpacing;
   final int maxLines;
-  final bool isUseThemeTextColor;
 
   const AppText(
     this.text, {
     super.key,
     this.color = Colors.black,
     this.fontSize = 16.0,
-    this.textAlign,
+    this.textAlign  = TextAlign.center ,
     this.fontFamily = StringConstants.poppinsFontFamily ,
     this.fontWeight = FontWeight.normal,
     this.lineHeight = 1.5,
@@ -30,7 +29,6 @@ class AppText extends StatelessWidget {
     this.textOverflow,
     this.letterSpacing = 0,
     this.maxLines = 0,
-    this.isUseThemeTextColor = true, 
   });
 
   @override

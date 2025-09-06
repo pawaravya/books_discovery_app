@@ -213,7 +213,7 @@ class NetworkAPIServices extends BaseApiServices {
   static void handleTokenExpiredFunctionality(BuildContext context) {
     if (isHandlingTokenExpiration) return; // Prevent duplicate calls
     isHandlingTokenExpiration = true;
-    AppViewUtils.showSnackBar("Token Expired", isError: true);
+    AppViewUtils.showTopSnackbar( context ,"Token Expired", isError: true);
     AppSharedPreferences.customSharedPreferences.clearSharedPreference();
 
     // Navigate to HomeBottomBar and clear the stack
@@ -295,7 +295,6 @@ class NetworkAPIServices extends BaseApiServices {
     if (e is DioError) {
       if (e.type == DioErrorType.receiveTimeout) {
         AppLogger.showErrorLogs('Request timed out');
-        AppViewUtils.showSnackBar('Request timed out', isError: true);
         throw TimeoutException('Request timed out');
       } else if (e.response != null) {
         AppLogger.showErrorLogs('API Error: ${e.response?.statusCode}');

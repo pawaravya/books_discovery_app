@@ -1,3 +1,4 @@
+import 'package:books_discovery_app/core/navigation/app_router.dart';
 import 'package:books_discovery_app/features/authentication/views/splash_screen.dart';
 import 'package:books_discovery_app/shared/app_shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,6 +10,7 @@ void main() async {
     await Firebase.initializeApp();
 
   await AppSharedPreferences.customSharedPreferences.initPrefs();
+  final AppRouter appRouter;
 
   runApp(const ProviderScope(child: MyApp()));
 }

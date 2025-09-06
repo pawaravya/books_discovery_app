@@ -1,10 +1,15 @@
+import 'package:books_discovery_app/core/constants/color_constants.dart';
 import 'package:books_discovery_app/core/constants/image_constants.dart';
 import 'package:books_discovery_app/features/authentication/models/onboarding_item_model.dart';
 import 'package:books_discovery_app/features/authentication/views/login_screen.dart';
+import 'package:books_discovery_app/features/authentication/views/sign_up_screen.dart';
 import 'package:books_discovery_app/shared/app_shared_preferences.dart';
+import 'package:books_discovery_app/shared/widgets/app_text.dart';
 import 'package:books_discovery_app/shared/widgets/app_view_utils.dart';
+import 'package:books_discovery_app/shared/widgets/base_widget.dart';
+import 'package:books_discovery_app/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
-
+import 'package:hexcolor/hexcolor.dart';
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -15,6 +20,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _controller = PageController();
   int currentPage = 0;
+
   final List<OnboardingItem> onboardingData = [
     OnboardingItem(
       imagePath: ImageConstants.onBoardingImage1,
@@ -33,109 +39,136 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       subtitle: "Study according to the study plan, make study more motivated",
     ),
   ];
-  Future<void> _finishOnboarding() async {
-    AppSharedPreferences.customSharedPreferences.setOnBoardingSeen(true);
-    if (!mounted) return;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: PageView.builder(
-                controller: _controller,
-                itemCount: onboardingData.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    currentPage = index;
-                  });
-                },
-                itemBuilder: (_, index) {
-                  final item = onboardingData[index];
-                  return Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AppViewUtils.getAssetImageSVG(
-                          item.imagePath,
-                          height: 260,
-                          width: 260,
-                        ),
-                        const SizedBox(height: 30),
-                        Text(
-                          item.title,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          item.subtitle,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
+    final size = MediaQuery.of(context).size; // screen width & height
+    final isSmallHeight = size.height < 700;
+
+    return BaseWidget(
+      screen: Column(
+        children: [
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: InkWell(
+                onTap: () {
+                  _controller.animateToPage(
+                    onboardingData.length - 1, // last page index
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
                   );
                 },
+                child: AppText("Skip"),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: List.generate(
-                      onboardingData.length,
-                      (index) => Container(
-                        margin: const EdgeInsets.only(right: 6),
-                        width: currentPage == index ? 12 : 8,
-                        height: currentPage == index ? 12 : 8,
-                        decoration: BoxDecoration(
-                          color: currentPage == index
-                              ? Colors.blue
-                              : Colors.grey,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
+          ),
+
+          /// Onboarding Content
+          Expanded(
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: onboardingData.length,
+              onPageChanged: (index) {
+                setState(() => currentPage = index);
+                if (index == onboardingData.length - 1) {
+                  AppSharedPreferences.customSharedPreferences
+                      .setOnBoardingSeen(true);
+                }
+              },
+              itemBuilder: (_, index) {
+                final item = onboardingData[index];
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    /// Responsive image size
+                    AppViewUtils.getAssetImageSVG(
+                      item.imagePath,
+                      height: size.height * 0.28, // 28% of screen height
+                      width: size.width * 0.6, // 60% of screen width
                     ),
-                  ),
-                  ElevatedButton(
+                    const SizedBox(height: 24),
+                    AppText(
+                      item.title,
+                      fontWeight: FontWeight.w700,
+                      fontSize: isSmallHeight ? 20 : 22,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    AppText(
+                      item.subtitle,
+                      fontWeight: FontWeight.w400,
+                      fontSize: isSmallHeight ? 14 : 16,
+                      color: HexColor(ColorConstants.greyShade1),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              onboardingData.length,
+              (index) => AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                margin: const EdgeInsets.only(right: 6),
+                width: currentPage == index ? 50 : 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  color: currentPage == index
+                      ? HexColor(ColorConstants.themeColor)
+                      : HexColor(ColorConstants.greyColor),
+                ),
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 20),
+          Visibility(
+            visible: currentPage == onboardingData.length - 1,
+            child: Row(
+              children: [
+                Expanded(
+                  child: CustomButton(
                     onPressed: () {
-                      if (currentPage == onboardingData.length - 1) {
-                        _finishOnboarding();
-                      } else {
-                        _controller.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeIn,
-                        );
-                      }
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return SignUpScreen();
+                          },
+                        ),
+                      );
                     },
-                    child: Text(
-                      currentPage == onboardingData.length - 1
-                          ? "Get Started"
-                          : "Next",
-                    ),
+                    text: "Sign up",
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CustomButton(
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return LoginScreen();
+                          },
+                        ),
+                      );
+                    },
+                    text: "Login",
+                    isSecondaryButton: true,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
