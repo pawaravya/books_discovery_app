@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:books_discovery_app/core/services/base_api_services.dart';
 import 'package:books_discovery_app/features/authentication/views/login_screen.dart';
@@ -22,7 +21,6 @@ class NetworkAPIServices extends BaseApiServices {
   Future<dynamic> generateGetAPIResponse(
     BuildContext context,
     String uri, {
-    bool requiredAuthHeader = true,
     bool isAfterRefreshedToken = false,
     Object? data,
   }) async {
@@ -33,7 +31,7 @@ class NetworkAPIServices extends BaseApiServices {
       AppLogger.showInfoLogs('GET: $uri');
       final response = await dio.get(
         uri,
-        options: await _buildOptions(requiredAuthHeader),
+        options: await _buildOptions(),
         data: data,
       );
 
@@ -45,12 +43,7 @@ class NetworkAPIServices extends BaseApiServices {
           e.response!.statusCode == 401) {
         var refreshTokenResponse = await refreshTokenAPIResonse(context);
         if (refreshTokenResponse == true && isAfterRefreshedToken == false) {
-          generateGetAPIResponse(
-            context,
-            uri,
-            requiredAuthHeader: requiredAuthHeader,
-            isAfterRefreshedToken: true,
-          );
+          generateGetAPIResponse(context, uri, isAfterRefreshedToken: true);
         } else {
           handleTokenExpiredFunctionality(context);
         }
@@ -66,7 +59,6 @@ class NetworkAPIServices extends BaseApiServices {
     BuildContext context,
     String uri,
     Object postData, {
-    bool requiredAuthHeader = false,
     bool isAfterRefreshedToken = false,
   }) async {
     if (!_internetHelper.isInternetConnected.value) {
@@ -77,7 +69,7 @@ class NetworkAPIServices extends BaseApiServices {
       final response = await dio.post(
         uri,
         data: postData,
-        options: await _buildOptions(requiredAuthHeader),
+        options: await _buildOptions(),
       );
 
       return response.data;
@@ -109,7 +101,7 @@ class NetworkAPIServices extends BaseApiServices {
       final response = await dio.put(
         uri,
         data: postData,
-        options: await _buildOptions(requiredAuthHeader),
+        options: await _buildOptions(),
       );
       return _parseApiResponse(response);
     } catch (e) {
@@ -152,7 +144,7 @@ class NetworkAPIServices extends BaseApiServices {
       final response = await dio.delete(
         uri,
         data: postData,
-        options: await _buildOptions(requiredAuthHeader),
+        options: await _buildOptions(),
       );
       return _parseApiResponse(response);
     } catch (e) {
@@ -213,7 +205,7 @@ class NetworkAPIServices extends BaseApiServices {
   static void handleTokenExpiredFunctionality(BuildContext context) {
     if (isHandlingTokenExpiration) return; // Prevent duplicate calls
     isHandlingTokenExpiration = true;
-    AppViewUtils.showTopSnackbar( context ,"Token Expired", isError: true);
+    AppViewUtils.showTopSnackbar(context, "Token Expired", isError: true);
     AppSharedPreferences.customSharedPreferences.clearSharedPreference();
 
     // Navigate to HomeBottomBar and clear the stack
@@ -223,39 +215,17 @@ class NetworkAPIServices extends BaseApiServices {
     );
   }
 
-  Future<Options> _buildOptions(
-    bool requiredAuthHeader, {
-    String? contentType,
-  }) async {
+  Future<Options> _buildOptions() async {
     return Options(
-      headers: await _getHeaders(requiredAuthHeader),
+      headers: await _getHeaders(),
       sendTimeout: const Duration(milliseconds: 10000),
       receiveTimeout: const Duration(milliseconds: 15000),
-      contentType: contentType ?? 'application/json',
+      contentType: 'application/json',
     );
   }
 
-  Future<Map<String, dynamic>> _getHeaders(bool requiredAuthHeader) async {
-    var token = "" ; // TODO
-    // AppSharedPreferences.customSharedPreferences.getValue<String>(
-    //   authToken,
-    // );
-
-    AppLogger.showInfoLogs("TOKEN ::: $token");
-
-    try {
-      if (token != null && requiredAuthHeader) {
-        return {
-          "Authorization": 'Bearer $token',
-          "Content-Type": "application/json",
-        };
-      } else {
-        return {"Content-Type": "application/json"};
-      }
-    } catch (e) {
-      AppLogger.showErrorLogs(e.toString());
-      return {};
-    }
+  Future<Map<String, dynamic>> _getHeaders() async {
+    return {"Content-Type": "application/json"};
   }
 
   // Helper: Parse API response
@@ -287,7 +257,7 @@ class NetworkAPIServices extends BaseApiServices {
 
   dynamic _handleUnAuthorizedError() {
     AppLogger.showErrorLogs('Token Expired');
-   
+
     return {'error': 'Token Expired.'};
   }
 

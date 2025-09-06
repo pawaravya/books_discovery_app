@@ -1,75 +1,128 @@
-import 'package:books_discovery_app/features/home/views/anyalytics_tab.dart';
-import 'package:books_discovery_app/features/home/views/contacts_tab.dart';
-import 'package:books_discovery_app/features/home/views/home_tab.dart';
-import 'package:books_discovery_app/features/home/views/nav_item.dart'; // Ensure this path is correct
-import 'package:books_discovery_app/features/home/views/profile_tab.dart';
+// features/home/views/main_tab_screen.dart
 import 'package:flutter/material.dart';
+// Import your actual tab screen widgets
+import 'home_tab.dart';
+import '../../anyalytics/views/anyalytics_tab.dart'; // Assuming this is the correct filename/spelling
+import '../../contacts/views/contacts_tab.dart';
+import '../../profile/views/profile_tab.dart';
 
-// Make sure this matches the 'page' property in AppRouter for the main tab route
-// @RoutePage(name: 'MainTabScreen') // Name matches AppRouter entry point name
-class MainTabScreen extends StatelessWidget {
+class MainTabScreen extends StatefulWidget {
   const MainTabScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-        return  Container() ;
+  State<MainTabScreen> createState() => _MainTabScreenState();
+}
 
-    // return
-    //  AutoTabsScaffold(
-    //   // Reference the named tab routes defined in AppRouter
-    //   // These names correspond to the 'name' property in AppRouter's children
-    //   routes: const [
-    //     // HomeTab(),      
-    //     // AnalyticsTab(),  // Name matches AppRouter's name: 'AnalyticsTab'
-    //     // ContactsTab(),   // Name matches AppRouter's name: 'ContactsTab'
-    //     // ProfileTab(),    // Name matches AppRouter's name: 'ProfileTab'
-    //   ],
-    //   floatingActionButton: FloatingActionButton(
-    //     shape: const CircleBorder(),
-    //     onPressed: () {
-    //       // Example action for FAB
-    //       ScaffoldMessenger.of(context)
-    //           .showSnackBar(const SnackBar(content: Text("Search Clicked!")));
-    //     },
-    //     child: const Icon(Icons.search),
-    //   ),
-    //   floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    //   bottomNavigationBuilder: (_, tabsRouter) {
-    //     return BottomAppBar(
-    //       shape: const CircularNotchedRectangle(),
-    //       notchMargin: 6,
-    //       child: Row(
-    //         mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //         children: [
-    //           NavItem(
-    //             icon: Icons.home,
-    //             label: "Home",
-    //             index: 0,
-    //             tabsRouter: tabsRouter,
-    //           ),
-    //           NavItem(
-    //             icon: Icons.analytics,
-    //             label: "Analytics",
-    //             index: 1,
-    //             tabsRouter: tabsRouter,
-    //           ),
-    //           const SizedBox(width: 48), // gap for FAB
-    //           NavItem(
-    //             icon: Icons.contacts,
-    //             label: "Contacts",
-    //             index: 2,
-    //             tabsRouter: tabsRouter,
-    //           ),
-    //           NavItem(
-    //             icon: Icons.person,
-    //             label: "Profile",
-    //             index: 3,
-    //             tabsRouter: tabsRouter,
-    //           ),
-    //         ],
-    //       ),
-    //     );
-    //   },
-    // );
+class _MainTabScreenState extends State<MainTabScreen> {
+  int _currentIndex = 0; // Start with Home tab (index 0)
+
+  // GlobalKey for each tab's Navigator to potentially access its state if needed
+  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
+    GlobalKey<NavigatorState>(), // Home Tab Navigator Key
+    GlobalKey<NavigatorState>(), // Analytics Tab Navigator Key
+    GlobalKey<NavigatorState>(), // Contacts Tab Navigator Key
+    GlobalKey<NavigatorState>(), // Profile Tab Navigator Key
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: IndexedStack(
+        index: _currentIndex,
+        children: [
+          // Each child is a Navigator managing its own stack
+          _buildTabNavigator(0, const HomeTab()),
+          _buildTabNavigator(1, const AnalyticsTab()),
+          _buildTabNavigator(2, const ContactsTab()),
+          _buildTabNavigator(3, const ProfileTab()),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed, // Good for 3+ items
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.analytics),
+            label: 'Analytics',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.contacts),
+            label: 'Contacts',
+          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+        currentIndex: _currentIndex,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  // Helper to build a Navigator for a specific tab
+  Widget _buildTabNavigator(int tabIndex, Widget firstScreen) {
+    return Navigator(
+      key: _navigatorKeys[tabIndex],
+      // onGenerateRoute defines how routes are created within this specific Navigator
+      onGenerateRoute: (settings) {
+        Widget? pageChild;
+
+        // Determine the widget to show based on the route name
+        // For simplicity, we'll mostly push the 'firstScreen' for the base route
+        // and demonstrate navigation with a placeholder for details.
+        switch (settings.name) {
+          case '/': // Default initial route for this Navigator
+            // Show the initial screen passed for this tab
+            pageChild = firstScreen;
+            break;
+          // --- Example: Specific route for Home Details ---
+          case '/home/details':
+            // In a real app, you'd pass arguments like an ID
+            // final args = settings.arguments as Map<String, dynamic>?;
+            pageChild = Scaffold(
+              appBar: AppBar(title: Text("Home Detail")),
+              body: Center(
+                child: Text("This is a detail page within the Home tab!"),
+              ),
+            );
+            break;
+          // --- Example: Specific route for Profile Settings ---
+          case '/profile/settings':
+            pageChild = Scaffold(
+              appBar: AppBar(title: Text("Settings")),
+              body: Center(child: Text("Profile Settings Screen")),
+            );
+            break;
+          // --- Add more cases for other tabs' nested routes as needed ---
+          default:
+            // Handle unknown routes within a tab
+            pageChild = Scaffold(
+              appBar: AppBar(title: const Text("Not Found")),
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Unknown route: ${settings.name}'),
+                    ElevatedButton(
+                      onPressed: () {},
+                      child: const Text('Go Back'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+        }
+
+        // Return a MaterialPageRoute to display the chosen widget
+        return MaterialPageRoute(
+          settings: settings, // Pass the original route settings
+          builder: (context) => pageChild!,
+        );
+      },
+    );
   }
 }

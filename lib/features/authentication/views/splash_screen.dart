@@ -1,8 +1,6 @@
 import 'package:books_discovery_app/core/constants/string_constants.dart';
-import 'package:books_discovery_app/features/authentication/views/login_screen.dart';
-import 'package:books_discovery_app/features/authentication/views/onboarding_screen.dart';
-import 'package:books_discovery_app/features/authentication/views/sign_up_screen.dart';
-import 'package:books_discovery_app/features/home/views/main_tab_screen.dart';
+import 'package:books_discovery_app/core/navigation/app_routes.dart';
+
 import 'package:books_discovery_app/shared/app_shared_preferences.dart';
 import 'package:books_discovery_app/shared/widgets/app_text.dart';
 import 'package:flutter/material.dart';
@@ -42,22 +40,14 @@ class _SplashScreenState extends State<SplashScreen>
     final String? authToken = AppSharedPreferences.customSharedPreferences
         .getAuthToken();
 
-    Widget nextScreen;
-
     if (!isOnboardingSeen) {
-      nextScreen = const OnboardingScreen();
+      Navigator.of(context).pushReplacementNamed(AppRoutes.onboarding);
     } else if (authToken != null && authToken.isNotEmpty) {
-      nextScreen = const MainTabScreen();
+      Navigator.of(context).pushReplacementNamed(AppRoutes.mainTabs);
     } else {
-      nextScreen = const LoginScreen();
+      Navigator.of(context).pushReplacementNamed(AppRoutes.login);
     }
 
-    if (!mounted) return;
-
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => nextScreen),
-      (route) => false,
-    );
   }
 
   @override
