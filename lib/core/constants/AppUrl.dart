@@ -1,0 +1,4 @@
+class Appurl {
+// static 
+
+}
