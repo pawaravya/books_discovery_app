@@ -9,6 +9,8 @@ class ImageConstants {
       "assets/images/onboarding_images/onboarding2.svg";
   static const String onBoardingImage3 =
       "assets/images/onboarding_images/onboarding3.svg";
-      static const String googleIcon = "assets/images/google_icon.svg" ;
+  static const String googleIcon = "assets/images/google_icon.svg";
+
+  static const String somethingWentWrongLotie =
+      "assets/lotties/something_went_wrong_lottie.json";
 }
- 

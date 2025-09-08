@@ -204,15 +204,7 @@ class AppViewUtils {
                         color: Colors.black, // Ensure color is set explicitly
                       ),
                     ),
-                    TextSpan(
-                      text:
-                          " Your Custom Styled Text", // Second part with different style
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red, // Example: Make it red and bold
-                      ),
-                    ),
+                   
                   ],
                 ),
               ),

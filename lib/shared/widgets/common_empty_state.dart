@@ -60,11 +60,14 @@ class _CommonEmptyStateState extends State<CommonEmptyState> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Lottie.asset(
-                      height: 200,
-                      width: 200,
-                      widget.stateScreenEmoji,
-                      repeat: true,
+                    Visibility(
+                      visible: widget.stateScreenEmoji != "",
+                      child: Lottie.asset(
+                        height: 200,
+                        width: 200,
+                        widget.stateScreenEmoji,
+                        repeat: true,
+                      ),
                     ),
                     SizedBox(height: 10),
                     AppText(

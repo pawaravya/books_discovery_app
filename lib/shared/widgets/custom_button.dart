@@ -43,7 +43,6 @@ class CustomButton extends StatelessWidget {
           }
         }
       },
-      // borderRadius: BorderRadius.circular(20),
       child: Container(
         height: height ?? 50,
         width: width ?? double.infinity,
@@ -64,6 +63,7 @@ class CustomButton extends StatelessWidget {
             Visibility(
               visible: !isLoading,
               replacement: AppLoader.loaderWidget(
+
                 color: isSecondaryButton
                     ? HexColor(ColorConstants.themeColor)
                     : HexColor(ColorConstants.whiteColor),

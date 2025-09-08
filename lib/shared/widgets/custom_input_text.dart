@@ -109,29 +109,16 @@ class _GetTextFieldState extends State<CustomInputText> {
                 style: TextStyle(
                   fontWeight: FontWeight.w400,
                   fontSize: 10,
-                  // height: 1.2,
-                  // letterSpacing: 0,
+                 
                   color: HexColor(ColorConstants.blackColor),
                 ),
-                children: widget.isMandatory
-                    ? [
-                        TextSpan(
-                          text: " *",
-                          style: TextStyle(
-                            color: Colors.red,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 10,
-                          ),
-                        )
-                      ]
-                    : [],
+                
               ),
             ),
           ),
         Container(
           decoration: BoxDecoration(
             color: HexColor(ColorConstants.whiteColor) ,
-           
             borderRadius: BorderRadius.circular(widget.cornerRadius! ),
           ),
           height: widget.height,
@@ -149,7 +136,7 @@ class _GetTextFieldState extends State<CustomInputText> {
             onChanged: (value) {
               setState(() {});
               if (widget.onChanged != null) {
-                widget.onChanged!();
+                // widget.onChanged!();
               }
             },
             onSubmitted: (val) {
@@ -160,9 +147,9 @@ class _GetTextFieldState extends State<CustomInputText> {
 
             onEditingComplete: widget.onEditingComplete,
             // If isFlag => forcibly readOnly, but visually "regular" style
-            readOnly: widget.isFlag
-                ? true
-                : (widget.enable == false ? true : widget.readOnly),
+            // readOnly: widget.isFlag
+            //     ? true
+            //     : (widget.enable == false ? true : widget.readOnly),
             maxLength: widget.maxLength,
             focusNode: widget.focusNode,
             textInputAction: widget.textInputAction,

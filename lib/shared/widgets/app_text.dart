@@ -26,7 +26,7 @@ class AppText extends StatelessWidget {
     this.fontWeight = FontWeight.normal,
     this.lineHeight = 1.5,
     this.textDecoration,
-    this.textOverflow,
+    this.textOverflow = TextOverflow.ellipsis,
     this.letterSpacing = 0,
     this.maxLines = 0,
   });

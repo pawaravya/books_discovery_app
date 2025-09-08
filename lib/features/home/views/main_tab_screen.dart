@@ -1,5 +1,10 @@
 // features/home/views/main_tab_screen.dart
+import 'package:books_discovery_app/features/home/models/books_model.dart';
+import 'package:books_discovery_app/features/home/views/book_details_screen.dart';
+import 'package:books_discovery_app/features/home/views/qr_code_scanner_screen.dart';
+import 'package:books_discovery_app/shared/widgets/app_view_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 // Import your actual tab screen widgets
 import 'home_tab.dart';
 import '../../anyalytics/views/anyalytics_tab.dart'; // Assuming this is the correct filename/spelling
@@ -32,33 +37,48 @@ class _MainTabScreenState extends State<MainTabScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: [
-          // Each child is a Navigator managing its own stack
-          _buildTabNavigator(0, const HomeTab()),
-          _buildTabNavigator(1, const AnalyticsTab()),
-          _buildTabNavigator(2, const ContactsTab()),
-          _buildTabNavigator(3, const ProfileTab()),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // Good for 3+ items
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.analytics),
-            label: 'Analytics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.contacts),
-            label: 'Contacts',
-          ),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
+    return WillPopScope(
+      onWillPop: () async {
+        final NavigatorState currentTabNavigator =
+            _navigatorKeys[_currentIndex].currentState!;
+
+        if (currentTabNavigator.canPop()) {
+          currentTabNavigator.pop(); // pop inside the tab
+          return false; // prevent quitting the app
+        }
+        var isExit = AppViewUtils.showAppExitConfirmation(context, () {
+          SystemNavigator.pop();
+        });
+        return isExit;
+      },
+      child: Scaffold(
+        body: IndexedStack(
+          index: _currentIndex,
+          children: [
+            // Each child is a Navigator managing its own stack
+            _buildTabNavigator(0, const HomeTab()),
+            _buildTabNavigator(1, const AnalyticsTab()),
+            _buildTabNavigator(2, const ContactsTab()),
+            _buildTabNavigator(3, const ProfileTab()),
+          ],
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed, // Good for 3+ items
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.analytics),
+              label: 'Analytics',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.contacts),
+              label: 'Contacts',
+            ),
+            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+          ],
+          currentIndex: _currentIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
@@ -67,39 +87,20 @@ class _MainTabScreenState extends State<MainTabScreen> {
   Widget _buildTabNavigator(int tabIndex, Widget firstScreen) {
     return Navigator(
       key: _navigatorKeys[tabIndex],
-      // onGenerateRoute defines how routes are created within this specific Navigator
       onGenerateRoute: (settings) {
         Widget? pageChild;
-
-        // Determine the widget to show based on the route name
-        // For simplicity, we'll mostly push the 'firstScreen' for the base route
-        // and demonstrate navigation with a placeholder for details.
         switch (settings.name) {
           case '/': // Default initial route for this Navigator
-            // Show the initial screen passed for this tab
             pageChild = firstScreen;
             break;
-          // --- Example: Specific route for Home Details ---
-          case '/home/details':
-            // In a real app, you'd pass arguments like an ID
-            // final args = settings.arguments as Map<String, dynamic>?;
-            pageChild = Scaffold(
-              appBar: AppBar(title: Text("Home Detail")),
-              body: Center(
-                child: Text("This is a detail page within the Home tab!"),
-              ),
-            );
+          case '/home/scanner_screen':
+            pageChild = QrScannerScreen();
+          case '/home/book_details':
+            final book = settings.arguments as Book; // 👈 your Book model
+            pageChild = BookDetailsScreen(book: book, heroTag: '');
             break;
-          // --- Example: Specific route for Profile Settings ---
-          case '/profile/settings':
-            pageChild = Scaffold(
-              appBar: AppBar(title: Text("Settings")),
-              body: Center(child: Text("Profile Settings Screen")),
-            );
-            break;
-          // --- Add more cases for other tabs' nested routes as needed ---
+
           default:
-            // Handle unknown routes within a tab
             pageChild = Scaffold(
               appBar: AppBar(title: const Text("Not Found")),
               body: Center(
@@ -116,10 +117,8 @@ class _MainTabScreenState extends State<MainTabScreen> {
               ),
             );
         }
-
-        // Return a MaterialPageRoute to display the chosen widget
         return MaterialPageRoute(
-          settings: settings, // Pass the original route settings
+          settings: settings,
           builder: (context) => pageChild!,
         );
       },

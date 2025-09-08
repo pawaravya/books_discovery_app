@@ -1,31 +1,13 @@
-// models/book.dart
 
-/// Represents a book volume from the Google Books API.
 class Book {
-  /// Type of resource. Value is always "books#volume".
   final String? kind;
-
-  /// Unique identifier for the volume.
   final String? id;
-
-  /// Opaque identifier for the version of the volume resource.
   final String? etag;
-
-  /// URL to the resource.
   final String? selfLink;
-
-  /// General information about the volume.
   final VolumeInfo? volumeInfo;
-
-  /// Information about the sale of the volume.
   final SaleInfo? saleInfo;
-
-  /// Information about the access to the volume.
   final AccessInfo? accessInfo;
-
-  /// Search result information related to the volume.
   final SearchInfo? searchInfo;
-
   Book({
     this.kind,
     this.id,
@@ -37,7 +19,6 @@ class Book {
     this.searchInfo,
   });
 
-  /// Creates a [Book] instance from a JSON map.
   factory Book.fromJson(Map<String, dynamic> json) {
     return Book(
       kind: json['kind'] as String?,
@@ -59,7 +40,6 @@ class Book {
     );
   }
 
-  /// Converts the [Book] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'kind': kind,
@@ -79,66 +59,26 @@ class Book {
   }
 }
 
-/// Contains general information about the volume.
 class VolumeInfo {
-  /// The title of the volume.
   final String? title;
-
-  /// The subtitle of the volume.
   final String? subtitle;
-
-  /// The list of authors of the volume.
   final List<String>? authors;
-
-  /// The publisher of the volume.
   final String? publisher;
-
-  /// The date of publication, in ISO 8601 format (YYYY-MM-DD).
   final String? publishedDate;
-
-  /// A synopsis of the volume.
   final String? description;
-
-  /// Industry identifiers for the volume (ISBN, etc.).
   final List<IndustryIdentifier>? industryIdentifiers;
-
-  /// Reading modes available for the volume.
   final ReadingModes? readingModes;
-
-  /// The number of pages in the volume.
   final int? pageCount;
-
-  /// The type of printed material (e.g., "BOOK").
   final String? printType;
-
-  /// The list of categories the volume belongs to.
   final List<String>? categories;
-
-  /// The maturity rating of the volume.
-  final String? maturityRating; // Consider enum if values are fixed
-
-  /// Whether anonymous logging is allowed.
+  final String? maturityRating; 
   final bool? allowAnonLogging;
-
-  /// The version of the content.
   final String? contentVersion;
-
-  /// Summary of panelization information.
   final PanelizationSummary? panelizationSummary;
-
-  /// URLs to view the image links for the volume.
   final ImageLinks? imageLinks;
-
-  /// The language of the volume (ISO 639-1 code).
   final String? language;
-
-  /// URL to preview the volume.
   final String? previewLink;
-
-  /// URL to get information about the volume.
   final String? infoLink;
-
-  /// Canonical URL for the volume.
   final String? canonicalVolumeLink;
 
   VolumeInfo({

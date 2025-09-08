@@ -16,4 +16,5 @@ class AppRoutes {
   static const String profileTabBase = '/main/profile';
   // Example nested route for profile
   static const String profileSettings = '/main/profile/settings';
+  static const  String qrCodeScannerScreen = '/qrscanner';
 }
