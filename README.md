@@ -1,16 +1,50 @@
-# books_discovery_app
+Books Discovery App
+#Overview
+Books Discovery App is a cross-platform mobile application built using Flutter. It allows users to explore, search, and analyze books data. The app supports barcode and QR code scanning for easy search and includes analytics based on user activity(Users search data).
 
-A new Flutter project.
+#Features
+Authentication: Email/password and Google Sign-In.
+Search: Search books using text, barcode, or QR code scanning.
+Analytics: Visual representation of categories distribution and publishing trends.
+Contacts Access: Fetch and display contacts from the device (with permission).
+state management: used riverpod for state management 
 
-## Getting Started
+#Firebase Setup
+1.Create a Firebase Project
+2.Go to Firebase Consoleand create a new project.
+3.Add App to Firebase
+4.Enable Firebase Services 
+Authentication: Enable Email/Password and Google Sign-In.
+5.Download and add google-services.json (Android) and GoogleService-Info.plist (iOS) to your project.
+6.Add Flutter Dependencies
+firebase_core: ^2.24.0
+firebase_auth: ^4.9.0
+firebase_storage: ^11.3.0
+google_sign_in: ^6.2.4
+flutter_riverpod: ^2.4.0
 
-This project is a starting point for a Flutter application.
+#Search Mechanism
+Users can search books using:
+Text input: Manual entry of book or author.
 
-A few resources to get you started if this is your first Flutter project:
+Barcode/QR code scanning:
+The app scans the code using the device camera.
+Extracted code is sent to the search API(ISBN or title).
+API returns matching books which are displayed in the app.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+#Analytics Logic
+Analytics are calculated based on local search history stored in the device.
+Two main charts:
+Categories Distribution:
+Counts how many times each book category has been searched.
+Displayed as a doughnut chart.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Publishing Trend:
+Counts books based on publishing year ranges.
+Displayed as a combined column and line chart.
+Charts are updated whenever the local data changes.
+
+#Steps to run the code 
+1. clone the using repo url :
+2.flutter pub get
+3.flutter run
