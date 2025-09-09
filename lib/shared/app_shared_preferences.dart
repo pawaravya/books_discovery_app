@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:books_discovery_app/features/authentication/models/user_model.dart';
 import 'package:books_discovery_app/features/home/models/books_model.dart';
 import 'package:books_discovery_app/features/home/models/search_history_item.dart';
+import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppSharedPreferences {
@@ -85,7 +86,11 @@ class AppSharedPreferences {
     if (_prefs == null) {
       throw Exception('SharedPreferences not initialized');
     }
+
+    final bool isOnboardingSeen =
+        getValue<bool>(_IS_ONBOARDING_SEEN_KEY) ?? false;
     await _prefs!.clear();
+    await saveValue(_IS_ONBOARDING_SEEN_KEY, isOnboardingSeen);
   }
 
   Future<void> setAuthToken(String token) async {
@@ -100,7 +105,21 @@ class AppSharedPreferences {
   }
 
   Future<void> saveUser(UserModel user) async {
-    await saveValue(_USERLOGINDATAKEY, user.toJson().toString());
+    final jsonString = jsonEncode(user.toJson()); // use jsonEncode
+    await saveValue(_USERLOGINDATAKEY, jsonString);
+  }
+
+  Future<UserModel?> getUser() async {
+    final jsonString = getValue<String>(_USERLOGINDATAKEY);
+    if (jsonString == null || jsonString.isEmpty) return null;
+
+    try {
+      final userMap = jsonDecode(jsonString) as Map<String, dynamic>;
+      return UserModel.fromJson(userMap);
+    } catch (e) {
+      debugPrint("Failed to decode user: $e");
+      return null;
+    }
   }
 
   Future<void> setOnBoardingSeen(bool seen) async {
@@ -111,13 +130,15 @@ class AppSharedPreferences {
     return getValue<bool>(_IS_ONBOARDING_SEEN_KEY) ?? false;
   }
 
-   /// Save query → results map
+  /// Save query → results map
   Future<void> saveSearchQueryAndResults(
     String query,
     List<Book> results,
   ) async {
     final existingMap = await getSearchQueryAndResults();
-
+if (existingMap.containsKey(query)) {
+    return;
+  }
     existingMap[query] = results;
 
     // Encode to Map<String, List<String>> where each book is json string

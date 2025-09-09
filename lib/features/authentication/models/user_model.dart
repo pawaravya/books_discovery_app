@@ -52,4 +52,6 @@ class UserModel {
       'phoneNumber': phoneNumber,
     };
   }
+
+  copyWith({required String photoUrl}) {}
 }

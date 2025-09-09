@@ -10,12 +10,14 @@ class BaseWidget extends StatefulWidget {
   Widget? bottomNavigationBar;
   bool isRequiredBottomInsect = false;
   final Future<bool> Function()? handleOnWillPop;
+   final double  sidePadding ;
   BaseWidget({
     super.key,
     required this.screen,
     this.bottomNavigationBar,
     this.isRequiredBottomInsect = false,
     this.handleOnWillPop,
+    this.sidePadding = 20
   });
 
   @override
@@ -54,7 +56,7 @@ class _BaseScreenState extends State<BaseWidget> {
               resizeToAvoidBottomInset: widget.isRequiredBottomInsect,
               backgroundColor: Colors.white,
               body: Padding(
-                padding: const EdgeInsets.only(left: 20.0 , right: 20),
+                padding:  EdgeInsets.symmetric(horizontal: widget.sidePadding),
                 child: Stack(
                   children: [
                     PopScope(

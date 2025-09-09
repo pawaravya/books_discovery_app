@@ -22,10 +22,10 @@ class HomeRepository {
 
       if (isNumeric) {
         url =
-            "${Appurl.booksIsbnSearchApi}$query&startIndex=$offset&maxResults=$limit";
+            "${Appurl.booksIsbnSearchApi}$scannerSearch&startIndex=$offset&maxResults=$limit";
       } else {
         url =
-            "${Appurl.booksTitleSearchApi}$query&startIndex=$offset&maxResults=$limit";
+            "${Appurl.booksTitleSearchApi}$scannerSearch&startIndex=$offset&maxResults=$limit";
       }
     }
     return networkAPIServices.generateGetAPIResponse(context, url);

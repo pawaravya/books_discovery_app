@@ -27,7 +27,6 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: AppRoutes.splash,
       onGenerateRoute: (settings) {
-        // Handle top-level routes
         switch (settings.name) {
           case AppRoutes.splash:
             return MaterialPageRoute(builder: (_) => SplashScreen());

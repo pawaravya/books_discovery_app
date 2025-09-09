@@ -1,5 +1,6 @@
 // features/home/viewmodels/home_notifier.dart
 import 'package:books_discovery_app/core/services/pagination_helper.dart';
+import 'package:books_discovery_app/features/anyalytics/viewmodels/anyalytics_notifier.dart';
 import 'package:books_discovery_app/features/home/models/books_model.dart';
 import 'package:books_discovery_app/features/home/models/home_screen_state.dart';
 import 'package:books_discovery_app/features/home/repositories/home_repository.dart';
@@ -8,8 +9,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BookStateNotifier extends StateNotifier<HomeScreenState> {
-  BookStateNotifier() : super(HomeScreenState.initial());
+    final Ref ref;
 
+ BookStateNotifier(this.ref) : super(HomeScreenState.initial());
   final HomeRepository homeRepository = HomeRepository();
   final PaginationHelper<Book> paginationHelper = PaginationHelper<Book>(
     limit: 40,
@@ -72,10 +74,11 @@ class BookStateNotifier extends StateNotifier<HomeScreenState> {
           );
         }
         paginationHelper.updateState(fetchedBooks);
-        AppSharedPreferences.customSharedPreferences.saveSearchQueryAndResults(
-          query,
-          fetchedBooks,
-        );
+        if (query.isNotEmpty || scannerSearch.isNotEmpty) {
+        await AppSharedPreferences.customSharedPreferences
+              .saveSearchQueryAndResults(query, fetchedBooks);
+            await   ref.read(analyticsProvider.notifier).refresh();
+        }
       } else {
         if (jsonData["totalItems"] == 0) {
           state = state.copyWith(books: [], isLoading: false);
@@ -99,5 +102,5 @@ class BookStateNotifier extends StateNotifier<HomeScreenState> {
 
 final homeScreenProvider =
     StateNotifierProvider<BookStateNotifier, HomeScreenState>((ref) {
-      return BookStateNotifier();
+      return BookStateNotifier(ref);
     });

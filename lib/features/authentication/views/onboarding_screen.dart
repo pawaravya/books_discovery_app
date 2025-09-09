@@ -1,5 +1,6 @@
 import 'package:books_discovery_app/core/constants/color_constants.dart';
 import 'package:books_discovery_app/core/constants/image_constants.dart';
+import 'package:books_discovery_app/core/services/permission_handler_service.dart';
 import 'package:books_discovery_app/features/authentication/models/onboarding_item_model.dart';
 import 'package:books_discovery_app/features/authentication/views/login_screen.dart';
 import 'package:books_discovery_app/features/authentication/views/sign_up_screen.dart';
@@ -10,6 +11,7 @@ import 'package:books_discovery_app/shared/widgets/base_widget.dart';
 import 'package:books_discovery_app/shared/widgets/custom_button.dart';
 import 'package:flutter/material.dart';
 import 'package:hexcolor/hexcolor.dart';
+
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
 
@@ -39,34 +41,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       subtitle: "Study according to the study plan, make study more motivated",
     ),
   ];
-
+@override
+  void initState() {
+ PermissionHandlerService.requestRequiredPermissions() ;
+ super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size; // screen width & height
     final isSmallHeight = size.height < 700;
-
     return BaseWidget(
       screen: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min, // Take minimum vertical space
         children: [
+          SizedBox(height: 40),
           Align(
             alignment: Alignment.topRight,
             child: Padding(
-              padding: const EdgeInsets.only(top: 10),
+              padding: const EdgeInsets.only(top: 10, right: 16),
               child: InkWell(
                 onTap: () {
                   _controller.animateToPage(
-                    onboardingData.length - 1, // last page index
+                    onboardingData.length - 1,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
                   );
                 },
-                child: AppText("Skip"),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: AppText(
+                    currentPage < onboardingData.length - 1 ? "Skip" : "",
+                    color: HexColor(ColorConstants.greyShade1),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
             ),
           ),
 
-          /// Onboarding Content
-          Expanded(
+          // Limit height of PageView instead of Expanded
+          SizedBox(
+            height: size.height * 0.6, // adjust as needed
             child: PageView.builder(
               controller: _controller,
               itemCount: onboardingData.length,
@@ -82,26 +99,37 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    /// Responsive image size
                     AppViewUtils.getAssetImageSVG(
                       item.imagePath,
-                      height: size.height * 0.28, // 28% of screen height
-                      width: size.width * 0.6, // 60% of screen width
+                      height: size.height * 0.35,
+                      width: size.width * 0.6,
                     ),
                     const SizedBox(height: 24),
-                    AppText(
-                      item.title,
-                      fontWeight: FontWeight.w700,
-                      fontSize: isSmallHeight ? 20 : 22,
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: (size.width - size.width * 0.6) / 2,
+                      ),
+                      child: AppText(
+                        item.title,
+                        fontWeight: FontWeight.w700,
+                        fontSize: isSmallHeight ? 20 : 22,
+                        textAlign: TextAlign.center,
+                        color: HexColor(ColorConstants.blackShade1),
+                      ),
                     ),
                     const SizedBox(height: 12),
-                    AppText(
-                      item.subtitle,
-                      fontWeight: FontWeight.w400,
-                      fontSize: isSmallHeight ? 14 : 16,
-                      color: HexColor(ColorConstants.greyShade1),
-                      textAlign: TextAlign.center,
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: (size.width - size.width * 0.6) / 2,
+                      ),
+
+                      child: AppText(
+                        item.subtitle,
+                        fontWeight: FontWeight.w400,
+                        fontSize: isSmallHeight ? 14 : 16,
+                        color: HexColor(ColorConstants.greyShade1),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ],
                 );
@@ -109,16 +137,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 60),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               onboardingData.length,
               (index) => AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.only(right: 6),
-                width: currentPage == index ? 50 : 10,
-                height: 10,
+                margin: const EdgeInsets.only(right: 10),
+                width: currentPage == index ? 50 : 15,
+                height: 8,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(5),
                   color: currentPage == index
@@ -129,7 +157,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             ),
           ),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 50),
           Visibility(
             visible: currentPage == onboardingData.length - 1,
             child: Row(
@@ -138,11 +166,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: CustomButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return SignUpScreen();
-                          },
-                        ),
+                        MaterialPageRoute(builder: (_) => SignUpScreen()),
                       );
                     },
                     text: "Sign up",
@@ -153,11 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   child: CustomButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return LoginScreen();
-                          },
-                        ),
+                        MaterialPageRoute(builder: (_) => LoginScreen()),
                       );
                     },
                     text: "Login",

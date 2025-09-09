@@ -1,10 +1,13 @@
 // features/home/views/main_tab_screen.dart
+import 'package:books_discovery_app/core/constants/color_constants.dart';
+import 'package:books_discovery_app/core/constants/image_constants.dart';
 import 'package:books_discovery_app/features/home/models/books_model.dart';
 import 'package:books_discovery_app/features/home/views/book_details_screen.dart';
 import 'package:books_discovery_app/features/home/views/qr_code_scanner_screen.dart';
 import 'package:books_discovery_app/shared/widgets/app_view_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:hexcolor/hexcolor.dart';
 // Import your actual tab screen widgets
 import 'home_tab.dart';
 import '../../anyalytics/views/anyalytics_tab.dart'; // Assuming this is the correct filename/spelling
@@ -46,6 +49,12 @@ class _MainTabScreenState extends State<MainTabScreen> {
           currentTabNavigator.pop(); // pop inside the tab
           return false; // prevent quitting the app
         }
+        if (_currentIndex != 0) {
+          setState(() {
+            _currentIndex = 0;
+          });
+          return false;
+        }
         var isExit = AppViewUtils.showAppExitConfirmation(context, () {
           SystemNavigator.pop();
         });
@@ -55,29 +64,27 @@ class _MainTabScreenState extends State<MainTabScreen> {
         body: IndexedStack(
           index: _currentIndex,
           children: [
-            // Each child is a Navigator managing its own stack
             _buildTabNavigator(0, const HomeTab()),
-            _buildTabNavigator(1, const AnalyticsTab()),
+            _buildTabNavigator(1, AnalyticsTab(key: ValueKey(_currentIndex))),
             _buildTabNavigator(2, const ContactsTab()),
             _buildTabNavigator(3, const ProfileTab()),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed, // Good for 3+ items
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.analytics),
-              label: 'Analytics',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.contacts),
-              label: 'Contacts',
-            ),
-            BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-          ],
+          backgroundColor: Colors.white,
+          elevation: 8,
+          iconSize: 25,
+          selectedItemColor: HexColor(ColorConstants.themeColor),
+
+          type: BottomNavigationBarType.fixed,
           currentIndex: _currentIndex,
           onTap: _onItemTapped,
+          items: [
+            _buildNavBarItem(ImageConstants.tabHomeIcon, "Home", 0),
+            _buildNavBarItem(ImageConstants.tabAnyalyticsIcon, "Analytics", 1),
+            _buildNavBarItem(ImageConstants.tabContactsIcon, "Contacts", 2),
+            _buildNavBarItem(ImageConstants.tabProfileIcon, "Profile", 3),
+          ],
         ),
       ),
     );
@@ -99,29 +106,48 @@ class _MainTabScreenState extends State<MainTabScreen> {
             final book = settings.arguments as Book; // 👈 your Book model
             pageChild = BookDetailsScreen(book: book, heroTag: '');
             break;
-
           default:
-            pageChild = Scaffold(
-              appBar: AppBar(title: const Text("Not Found")),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Unknown route: ${settings.name}'),
-                    ElevatedButton(
-                      onPressed: () {},
-                      child: const Text('Go Back'),
-                    ),
-                  ],
-                ),
-              ),
-            );
         }
         return MaterialPageRoute(
           settings: settings,
           builder: (context) => pageChild!,
         );
       },
+    );
+  }
+
+  BottomNavigationBarItem _buildNavBarItem(
+    String asset,
+    String label,
+    int index,
+  ) {
+    return BottomNavigationBarItem(
+      label: label,
+      icon: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_currentIndex == index)
+            Container(
+              height: 3,
+              width: 30,
+              margin: const EdgeInsets.only(bottom: 4),
+              decoration: BoxDecoration(
+                color: HexColor(
+                  ColorConstants.themeColor,
+                ), // change color as needed
+                borderRadius: BorderRadius.circular(2),
+              ),
+            )
+          else
+            const SizedBox(height: 15), // keeps spacing same
+          AppViewUtils.getAssetImageSVG(
+            asset,
+            color: index != _currentIndex
+                ? HexColor(ColorConstants.searchInputColor)
+                : HexColor(ColorConstants.themeColor),
+          ),
+        ],
+      ),
     );
   }
 }

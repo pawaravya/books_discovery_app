@@ -1,4 +1,5 @@
 import 'package:books_discovery_app/core/constants/color_constants.dart';
+import 'package:books_discovery_app/core/constants/string_constants.dart';
 import 'package:books_discovery_app/shared/widgets/app_loade.dart';
 import 'package:books_discovery_app/shared/widgets/app_text.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,7 @@ class CustomButton extends StatelessWidget {
     this.isLoading = false,
     this.isDisabled = false,
     this.icon,
-    this.radius = 10,
+    this.radius = 12,
     this.textStyle,
     this.isSecondaryButton = false,
     this.isSolidRedColorButton = false,
@@ -47,7 +48,7 @@ class CustomButton extends StatelessWidget {
         height: height ?? 50,
         width: width ?? double.infinity,
         decoration: BoxDecoration(
-          border: Border.all(color: HexColor(ColorConstants.themeColor)),
+          border: Border.all(width: 0.5 , color: HexColor(ColorConstants.themeColor ,) ),
 
           borderRadius: BorderRadius.circular(radius ?? 0),
 
@@ -69,10 +70,9 @@ class CustomButton extends StatelessWidget {
                     : HexColor(ColorConstants.whiteColor),
               ),
               child: AppText(
-                // letterSpacing:
-                //     textStyle?.letterSpacing ??
-                //     (textStyle?.fontSize ?? 11.5) * 0.1,
+               
                 text,
+                fontFamily: StringConstants.poppinsFontFamily,
                 color: isSecondaryButton
                     ? HexColor(ColorConstants.themeColor)
                     : HexColor(ColorConstants.whiteColor),

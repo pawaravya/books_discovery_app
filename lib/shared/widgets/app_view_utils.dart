@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:books_discovery_app/core/constants/color_constants.dart';
+import 'package:books_discovery_app/core/constants/image_constants.dart';
 import 'package:books_discovery_app/core/constants/string_constants.dart';
 import 'package:books_discovery_app/shared/widgets/app_text.dart';
 import 'package:books_discovery_app/shared/widgets/custom_button.dart';
@@ -204,7 +205,6 @@ class AppViewUtils {
                         color: Colors.black, // Ensure color is set explicitly
                       ),
                     ),
-                   
                   ],
                 ),
               ),
@@ -241,70 +241,69 @@ class AppViewUtils {
   static showPopup(
     BuildContext context,
     String popUpHeading,
-    VoidCallback onTapbuttonOption1,
-    VoidCallback onTapbuttonOption2, {
+    Function() onTapbutton, {
     String popUpSubHeading = "",
     bool isRequiredSubheading = false,
-    String buttonOption1Heading = "",
-    String buttonOption2Heading = "",
+    String buttonText = "",
+    bool isbarrierDismissible = true,
   }) {
     showDialog(
       context: context,
+      barrierDismissible: isbarrierDismissible,
       builder: (BuildContext context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)),
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          content: Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 30),
-                    child: AppText(
-                      popUpHeading,
-                      fontWeight: FontWeight.w500,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Visibility(
-                    visible: isRequiredSubheading,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 30),
+        return WillPopScope(
+          onWillPop: () async {
+            onTapbutton();
+            return true;
+          },
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            content: Wrap(
+              alignment: WrapAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 40),
+                    getAssetImageSVG(ImageConstants.sucessIcon),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
                       child: AppText(
-                        popUpSubHeading,
+                        popUpHeading,
                         fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                        color: HexColor(ColorConstants.blackShade1),
                         textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 26),
-                    child: InkWell(
-                      onTap: onTapbuttonOption1,
-                      child: AppText(
-                        buttonOption1Heading,
-                        fontWeight: FontWeight.w400,
-                        textAlign: TextAlign.center,
+                    Visibility(
+                      visible: isRequiredSubheading,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 9, bottom: 15),
+                        child: AppText(
+                          popUpSubHeading,
+                          fontSize: 12,
+                          color: HexColor(ColorConstants.greyShade1),
+                          fontWeight: FontWeight.w400,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 21, bottom: 0),
-                    child: InkWell(
-                      onTap: onTapbuttonOption2,
-                      child: AppText(
-                        buttonOption2Heading,
-                        fontWeight: FontWeight.w400,
-                        textAlign: TextAlign.center,
-                      ),
+                    CustomButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        onTapbutton();
+                      },
+                      text: buttonText,
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         );
       },

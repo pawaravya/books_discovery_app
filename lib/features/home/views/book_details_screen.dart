@@ -1,5 +1,10 @@
+import 'package:books_discovery_app/core/constants/color_constants.dart';
 import 'package:books_discovery_app/features/home/models/books_model.dart';
+import 'package:books_discovery_app/shared/widgets/app_text.dart';
+import 'package:books_discovery_app/shared/widgets/base_widget.dart';
+import 'package:books_discovery_app/shared/widgets/network_image_with_placeholder.dart';
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:photo_view/photo_view.dart';
 
 class BookDetailsScreen extends StatelessWidget {
@@ -16,16 +21,15 @@ class BookDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final volumeInfo = book.volumeInfo;
 
-    return Scaffold(
-      body: CustomScrollView(
+    return BaseWidget(
+      screen: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 300,
+            expandedHeight: 400,
             pinned: true,
             stretch: true,
-            backgroundColor: Colors.deepPurple,
+            backgroundColor: Colors.white,
             flexibleSpace: FlexibleSpaceBar(
-              title: Text(volumeInfo?.title ?? "Book Details"),
               background: GestureDetector(
                 onTap: () {
                   if (volumeInfo?.imageLinks?.thumbnail != null) {
@@ -42,10 +46,9 @@ class BookDetailsScreen extends StatelessWidget {
                 },
                 child: Hero(
                   tag: heroTag,
-                  child: Image.network(
-                    volumeInfo?.imageLinks?.thumbnail ??
-                        "https://via.placeholder.com/150",
-                    fit: BoxFit.cover,
+                  child: NetworkImageWithPlaceholder(
+                    imageUrl: volumeInfo?.imageLinks?.thumbnail ?? "",
+                    placeholderAsset: "",
                   ),
                 ),
               ),
@@ -59,33 +62,28 @@ class BookDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
-                  Text(
+                  AppText(
                     volumeInfo?.title ?? "No Title",
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+
+                    fontWeight: FontWeight.bold,
                   ),
                   const SizedBox(height: 8),
 
                   // Authors
                   if (volumeInfo?.authors != null)
-                    Text(
+                    AppText(
                       "by ${volumeInfo!.authors!.join(', ')}",
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontStyle: FontStyle.italic,
-                            color: Colors.grey[700],
-                          ),
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey[700] ?? Colors.black,
                     ),
 
                   const SizedBox(height: 12),
 
                   // Description
                   if (volumeInfo?.description != null)
-                    Text(
+                    AppText(
                       volumeInfo!.description!,
                       textAlign: TextAlign.justify,
-                      style: Theme.of(context).textTheme.bodyMedium,
                     ),
 
                   const SizedBox(height: 20),
@@ -131,17 +129,21 @@ class _InfoChip extends StatelessWidget {
       label: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontSize: 10, color: Colors.white70)),
-          Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          AppText(label, fontSize: 10, color: Colors.white),
+          AppText(
+            value,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ],
       ),
-      backgroundColor: Colors.deepPurple,
+      backgroundColor: HexColor(ColorConstants.themeColor),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     );
   }
 }
 
-/// Fullscreen Image Viewer with pinch-to-zoom
 class FullscreenImageView extends StatelessWidget {
   final String imageUrl;
   final String heroTag;
@@ -163,7 +165,7 @@ class FullscreenImageView extends StatelessWidget {
             tag: heroTag,
             child: PhotoView(
               imageProvider: NetworkImage(imageUrl),
-              backgroundDecoration: const BoxDecoration(color: Colors.black),
+              backgroundDecoration: const BoxDecoration(color: Colors.white),
             ),
           ),
         ),
