@@ -1,5 +1,5 @@
 Books Discovery App
-
+Repo url : https://github.com/pawaravya/books_discovery_app.git
 
 Overview
 
@@ -63,39 +63,69 @@ void main() async {
 
 Search Mechanism
 
-Users can search books using:
+The search functionality works in two ways:
 
-Text Input: Manual entry of book title or author.
+1. Text Input
 
-Barcode/QR Code Scanning:
+Users can manually enter the book  author name in the search bar.
 
-The app scans the code using the device camera.
+The entered query is sent to the google API.
 
-Extracted code (ISBN or title) is sent to the search API.
+The API returns a list of books matching the input, which is displayed in the app.
 
-The API returns matching books which are displayed in the app.
+2. Barcode/QR Code Scanning
 
+Users can scan barcodes or QR codes using the device camera.
 
+The app extracts the code (usually ISBN or title) from the scanned image.
+
+The extracted code is sent to the google API.
+
+The API returns matching books, which are then displayed in the app.
+
+Flow:
+
+User taps the search with qr or bar code tet  → device camera opens.
+
+Scan the barcode/QR code → app decodes the value.
+
+The decoded value is sent to the google API.
+
+The API responds with a list of books → app displays the results.
 
 Analytics Logic
 
-Analytics are calculated based on local search history stored on the device.
+Analytics in the app are calculated based on local search history stored on the device. The app uses this history to generate two types of charts:
 
-Categories Distribution:
+1. Categories Distribution
 
-Counts how many times each book category has been searched.
+Counts how many times books of each category have been searched.
 
 Displayed as a doughnut chart.
 
+Updates automatically whenever new searches are performed.
 
-
-Publishing Trend:
+2. Publishing Trend
 
 Counts books based on publishing year ranges.
 
 Displayed as a combined column and line chart.
 
-Charts are updated automatically whenever the local data changes.
+Updates dynamically based on local search data changes.
+
+Flow:
+
+Every search (text or code) is stored locally in search history.
+
+App aggregates the data to calculate:
+
+Number of searches per category.
+
+Number of books per year range.
+
+The charts are drawn using Syncfusion charts (SfCircularChart for doughnut, SfCartesianChart for trend).
+
+Charts automatically refresh whenever local data changes.
 
 
 
